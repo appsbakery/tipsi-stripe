@@ -26,9 +26,7 @@ import com.stripe.android.ApiResultCallback;
 import com.stripe.android.AppInfo;
 import com.stripe.android.PaymentIntentResult;
 import com.stripe.android.SetupIntentResult;
-import com.stripe.android.SourceCallback;
 import com.stripe.android.Stripe;
-import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Address;
 import com.stripe.android.model.ConfirmPaymentIntentParams;
 import com.stripe.android.model.ConfirmSetupIntentParams;
@@ -192,14 +190,16 @@ public class StripeModule extends ReactContextBaseJavaModule {
       ArgCheck.nonNull(mStripe);
       ArgCheck.notEmptyString(mPublicKey);
 
-      mStripe.createToken(
+      mStripe.createCardToken(
         createCard(cardData),
-        mPublicKey,
-        new TokenCallback() {
-          public void onSuccess(Token token) {
+        new ApiResultCallback<Token>() {
+          @Override
+          public void onSuccess(@NonNull Token token) {
             promise.resolve(convertTokenToWritableMap(token));
           }
-          public void onError(Exception error) {
+
+          @Override
+          public void onError(@NonNull Exception error) {
             error.printStackTrace();
             promise.reject(toErrorCode(error), error.getMessage());
           }
@@ -217,13 +217,14 @@ public class StripeModule extends ReactContextBaseJavaModule {
 
       mStripe.createBankAccountToken(
         createBankAccount(accountData),
-        mPublicKey,
-        null,
-        new TokenCallback() {
-          public void onSuccess(Token token) {
+        new ApiResultCallback<Token>() {
+          @Override
+          public void onSuccess(@NonNull Token token) {
             promise.resolve(convertTokenToWritableMap(token));
           }
-          public void onError(Exception error) {
+
+          @Override
+          public void onError(@NonNull Exception error) {
             error.printStackTrace();
             promise.reject(toErrorCode(error), error.getMessage());
           }
@@ -423,14 +424,14 @@ public class StripeModule extends ReactContextBaseJavaModule {
 
     ArgCheck.nonNull(sourceParams);
 
-    mStripe.createSource(sourceParams, new SourceCallback() {
+    mStripe.createSource(sourceParams, new ApiResultCallback<Source>() {
       @Override
-      public void onError(Exception error) {
+      public void onError(@NonNull Exception error) {
         promise.reject(toErrorCode(error));
       }
 
       @Override
-      public void onSuccess(Source source) {
+      public void onSuccess(@NonNull Source source) {
         if (Source.SourceFlow.REDIRECT.equals(source.getFlow())) {
           Activity currentActivity = getCurrentActivity();
           if (currentActivity == null) {

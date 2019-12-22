@@ -38,7 +38,7 @@ android {
 
 dependencies {
   def googlePlayServicesVersion = safeExtGet("googlePlayServicesVersion", "18.0.0")
-  def stripeVersion = safeExtGet("stripeVersion", "10.4.6")
+  def stripeVersion = safeExtGet("stripeVersion", "12.8.2")
 
   implementation fileTree(include: ["*.jar"], dir: "libs")
   implementation "com.facebook.react:react-native:+"

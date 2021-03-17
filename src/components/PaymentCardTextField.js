@@ -7,9 +7,10 @@ import {
   TouchableWithoutFeedback,
   ViewPropTypes,
   Platform,
+  TextInput
 } from 'react-native'
 import PropTypes from 'prop-types'
-import TextInputState from 'react-native/Libraries/Components/TextInput/TextInputState'
+const { State: TextInputState } = TextInput;
 
 const FieldStylePropType = PropTypes.shape({
   ...ViewPropTypes.style,
@@ -130,7 +131,10 @@ export default class PaymentCardTextField extends Component {
     }
   }
 
-  isFocused = () => TextInputState.currentlyFocusedField() === findNodeHandle(this.cardTextFieldRef)
+  isFocused = () =>
+    (TextInputState.currentlyFocusedInput
+      ? TextInputState.currentlyFocusedInput()
+      : TextInputState.currentlyFocusedField()) === findNodeHandle(this.cardTextFieldRef)
 
   focus = () => {
     TextInputState.focusTextInput(findNodeHandle(this.cardTextFieldRef))
